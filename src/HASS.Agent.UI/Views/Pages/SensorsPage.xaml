@@ -1,0 +1,152 @@
+<Page
+    x:Class="HASS.Agent.UI.Views.Pages.SensorsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HASS.Agent.UI.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:models="using:HASS.Agent.UI.ViewModels"
+	xmlns:converters="using:CommunityToolkit.WinUI.Converters"
+    mc:Ignorable="d"
+	x:Name="ThisPage">
+
+    <Page.Resources>
+        <converters:BoolToObjectConverter
+			x:Key="BoolToGlyph"
+            FalseValue="&#xE769;"
+            TrueValue="&#xE768;"
+		/>
+
+        <converters:BoolToObjectConverter
+			x:Key="BoolToActive"
+            FalseValue="Inactive"
+            TrueValue="Active"
+		/>
+
+        <converters:BoolToObjectConverter
+            x:Key="BoolToAccentColorConverter"
+            FalseValue="{ThemeResource AccentFillColorDefaultBrush}"
+            TrueValue="{ThemeResource ControlStrongFillColorDefaultBrush}" />
+
+
+        <DataTemplate x:Key="SensorDataTemplate" x:DataType="models:AbstractDiscoverableViewModel">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0">
+                    <FontIcon Glyph="{Binding Active, Converter={StaticResource BoolToGlyph}, Mode=OneWay}"
+                              Foreground="{Binding Active, Converter={StaticResource BoolToAccentColorConverter}, Mode=OneWay}"
+							  HorizontalAlignment="Center"
+							  Margin="15 0"
+							  ToolTipService.ToolTip="{Binding Active, Converter={StaticResource BoolToActive}, Mode=OneWay}"/>
+                </Border>
+                <Border Grid.Column="1">
+                    <TextBlock Text="{Binding Name}" Margin="10" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Column="2">
+                    <TextBlock Text="{Binding Type}" Margin="10" VerticalAlignment="Center"/>
+                </Border>
+                <Border Grid.Column="3">
+                    <CommandBar OverflowButtonVisibility="Collapsed">
+                        <CommandBar.PrimaryCommands>
+                            <AppBarButton Icon="Edit" ToolTipService.ToolTip="Edit" Command="{Binding ElementName=ThisPage, Path=DataContext.EditCommand}" CommandParameter="{Binding}"/>
+                            <AppBarSeparator />
+                            <AppBarButton ToolTipService.ToolTip="Start/Stop" Command="{Binding ElementName=ThisPage, Path=DataContext.StartStopCommand}" CommandParameter="{Binding}">
+                                <AppBarButton.Icon>
+                                    <FontIcon Glyph="&#xE7E8;"/>
+                                </AppBarButton.Icon>
+                            </AppBarButton>
+                            <AppBarSeparator />
+                            <AppBarButton Icon="Delete">
+                                <Button.Flyout>
+                                    <Flyout>
+                                        <StackPanel>
+                                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Text="Sensor will be removed.&#10;Do you want to continue?" Margin="0,0,0,12" />
+                                            <Button Content="Yes" Command="{Binding ElementName=ThisPage, Path=DataContext.DeleteCommand}" CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </AppBarButton>
+                        </CommandBar.PrimaryCommands>
+                    </CommandBar>
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SensorListHeaderTemplate">
+            <Grid Margin="12 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0">
+                    <TextBlock Text="" Margin="10" HorizontalAlignment="Center"/>
+                </Border>
+                <Border Grid.Column="1">
+                    <TextBlock Text="Name" Margin="10" />
+                </Border>
+                <Border Grid.Column="2">
+                    <TextBlock Text="Type" Margin="10"/>
+                </Border>
+                <Border Grid.Column="3">
+                    <TextBlock Text="Options" Margin="10" HorizontalAlignment="Right"/>
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid Grid.Row="0" Grid.Column="1" Margin="0 8">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4">
+                <Button ToolTipService.ToolTip="Add new sensor" Command="{Binding NewCommand}">
+                    <FontIcon Glyph="&#xECC8;" FontSize="16"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+        
+        <Grid Grid.Row="1" Grid.Column="1" Margin="0 4">
+            <ListView
+                x:Name="SensorsListView"
+			    HeaderTemplate="{StaticResource SensorListHeaderTemplate}"
+                ItemTemplate="{StaticResource SensorDataTemplate}"
+			    ItemsSource="{Binding Sensors}"
+                MinWidth="900"
+                Height="400"
+                HorizontalAlignment="Center"
+			    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+			    BorderThickness="1"
+			    BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+			    CornerRadius="{StaticResource ControlCornerRadius}"
+		    >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
+    </Grid>
+</Page>

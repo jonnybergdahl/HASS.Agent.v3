@@ -1,0 +1,24 @@
+<Page
+    x:Class="HASS.Agent.UI.Views.Pages.DebugPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:HASS.Agent.UI.Views.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:test="using:HASS.Agent.UI.Views.Pages"
+    mc:Ignorable="d">
+
+	<Grid>
+		<StackPanel>
+			<TextBlock Text="Dummy Settings Page" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<TextBlock Text="{Binding MqttStatus, Mode=OneWay}"/>
+			<Button Content="plus" Command="{Binding ButtonCommand}"/>
+			<Button Content="stop mqtt" Command="{Binding ButtonCommand2}"/>
+			<Button Content="show dialog" Click="Button_Click"/>
+			<Button Content="GC" Command="{Binding ButtonCommand3}"/>
+			<Button Content="Save" Command="{Binding ButtonCommand4}"/>
+			<Button Content="close main window" Command="{Binding ButtonCommand5}"/>
+		</StackPanel>
+
+	</Grid>
+</Page>
